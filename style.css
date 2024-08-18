@@ -1,0 +1,41 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+}
+
+#canvas {
+  outline: 1px solid black;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  align-items: start;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.canvas-panel {
+  margin-right: 1rem;
+  height: 100%;
+}
+.settings-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.setting-panel-element {
+  padding: 0.5rem;
+  background: cornflowerblue;
+  display: flex;
+  flex-direction: column;
+}
+
+.setting-panel-element:not(:last-child){
+  margin-bottom: 0.5rem;
+}
