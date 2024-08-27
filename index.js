@@ -8,23 +8,41 @@ var setupCanvas = function (width, height) {
     var ctx = canvas.getContext("2d");
     return ctx;
 };
-var resizeCanvas = function (canvas) {
-    var _a = canvas.getBoundingClientRect(), width = _a.width, height = _a.height;
-    var devicePixelRatio = window.devicePixelRatio;
-    var el = document.createElement("div");
-    el.innerText = devicePixelRatio.toString();
-    canvas.width = width * devicePixelRatio;
-    canvas.height = height * devicePixelRatio;
-    var ctx = canvas.getContext("2d");
-    if (ctx) {
-        ctx.scale(devicePixelRatio, devicePixelRatio);
-    }
-};
+// const resizeCanvas = (canvas: HTMLCanvasElement) => {
+// 	const { width, height } = canvas.getBoundingClientRect();
+// 	const { devicePixelRatio } = window;
+// 	const el = document.createElement("div");
+// 	el.innerText = devicePixelRatio.toString();
+// 	canvas.width = width * devicePixelRatio;
+// 	canvas.height = height * devicePixelRatio;
+// 	const ctx = canvas.getContext("2d");
+// 	if (ctx) {
+// 		ctx.scale(devicePixelRatio, devicePixelRatio);
+// 	}
+// };
 window.addEventListener("DOMContentLoaded", function () {
+    var _a, _b;
     var ctx = setupCanvas(1000, 1000);
     if (!ctx)
         throw new Error("ctx not found");
-    resizeCanvas(ctx.canvas);
+    // resizeCanvas(ctx.canvas);
+    var canvasSizeEl = document.getElementById("canavs-size");
+    var initialValue = canvasSizeEl.value;
+    var canvasWidth = initialValue.split("x")[0];
+    var canvasHeight = initialValue.split("x")[1];
+    console.log({ canvasWidth: canvasWidth, canvasHeight: canvasHeight });
+    canvasSizeEl.addEventListener("change", function (e) {
+        var _a;
+        var target = e.target;
+        var value = target.value;
+        _a = value.split("x"), canvasWidth = _a[0], canvasHeight = _a[1];
+        console.log({ canvasWidth: canvasWidth, canvasHeight: canvasHeight });
+    });
+    // biome-ignore lint/style/useNumberNamespace: <explanation>
+    ctx.canvas.width = (_a = parseInt(canvasWidth)) !== null && _a !== void 0 ? _a : 1000;
+    // biome-ignore lint/style/useNumberNamespace: <explanation>
+    ctx.canvas.height = (_b = parseInt(canvasHeight)) !== null && _b !== void 0 ? _b : 1000;
+    ctx.canvas.style.width = "100%";
     var drawBtn = document.getElementById("draw");
     drawBtn === null || drawBtn === void 0 ? void 0 : drawBtn.addEventListener("click", function () {
         ctx.reset();
@@ -181,17 +199,46 @@ var drawLooseWave = function (ctx, options) {
     }
 };
 var drawBrick = function (ctx, options) {
-    var width = options.size + options.size / 2;
+    // const width = options.size + options.size / 2;
+    // const height = options.size;
+    // for (let c = 0; c < options.cols; c++) {
+    // 	for (let r = 0; r < options.rows; r++) {
+    // 		ctx.strokeStyle =
+    // 			options.fgColors[Math.floor(Math.random() * options.fgColors.length)];
+    // 		if (r % 2 === 0) {
+    // 			ctx.strokeRect(c * width, r * height, width, height);
+    // 		} else {
+    // 			ctx.strokeRect(c * width - width / 2, r * height, width, height);
+    // 		}
+    // 	}
+    // }
+    var r = 0;
+    var c = 0;
+    var width = options.size + options.size;
     var height = options.size;
-    for (var c = 0; c < options.cols; c++) {
-        for (var r = 0; r < options.rows; r++) {
-            ctx.strokeStyle =
-                options.fgColors[Math.floor(Math.random() * options.fgColors.length)];
+    for (r = 0; r < options.rows; r++) {
+        ctx.beginPath();
+        ctx.strokeStyle =
+            options.fgColors[Math.floor(Math.random() * options.fgColors.length)];
+        ctx.moveTo(0, r * options.size);
+        ctx.lineTo(options.cols * options.size, r * options.size);
+        ctx.stroke();
+        for (c = 0; c < options.cols; c++) {
             if (r % 2 === 0) {
-                ctx.strokeRect(c * width, r * height, width, height);
+                ctx.beginPath();
+                ctx.strokeStyle =
+                    options.fgColors[Math.floor(Math.random() * options.fgColors.length)];
+                ctx.moveTo(c * width, r * height);
+                ctx.lineTo(c * width, r * height + height);
+                ctx.stroke();
             }
             else {
-                ctx.strokeRect(c * width - width / 2, r * height, width, height);
+                ctx.beginPath();
+                ctx.strokeStyle =
+                    options.fgColors[Math.floor(Math.random() * options.fgColors.length)];
+                ctx.moveTo(c * width + width / 2, r * height);
+                ctx.lineTo(c * width + width / 2, r * height + height);
+                ctx.stroke();
             }
         }
     }
