@@ -236,7 +236,7 @@ var parseSettings = function (formData, canvasWidth, canvasHeight) {
 };
 var draw = function (ctx, options) {
     resetCanvas(ctx);
-    var rotation = options.rotation, scale = options.scale, type = options.type;
+    var rotation = options.rotation, scale = options.scale, type = options.type, bgColor = options.bgColor;
     var canvasWidth = ctx.canvas.width;
     var canvasHeight = ctx.canvas.height;
     if (rotation >= 1) {
@@ -249,6 +249,8 @@ var draw = function (ctx, options) {
         ctx.scale(scale, scale);
         ctx.translate(-canvasWidth / 2, -canvasHeight / 2);
     }
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     switch (type) {
         case "stripes": {
             drawStripes(ctx, options);
