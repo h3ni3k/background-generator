@@ -8,54 +8,30 @@ var setupCanvas = function (width, height) {
     var ctx = canvas.getContext("2d");
     return ctx;
 };
-// const resizeCanvas = (canvas: HTMLCanvasElement) => {
-// 	const { width, height } = canvas.getBoundingClientRect();
-// 	const { devicePixelRatio } = window;
-// 	const el = document.createElement("div");
-// 	el.innerText = devicePixelRatio.toString();
-// 	canvas.width = width * devicePixelRatio;
-// 	canvas.height = height * devicePixelRatio;
-// 	const ctx = canvas.getContext("2d");
-// 	if (ctx) {
-// 		ctx.scale(devicePixelRatio, devicePixelRatio);
-// 	}
-// };
 window.addEventListener("DOMContentLoaded", function () {
     var _a, _b;
     var ctx = setupCanvas(1000, 1000);
     if (!ctx)
         throw new Error("ctx not found");
-    // resizeCanvas(ctx.canvas);
     var canvasSizeEl = document.getElementById("canavs-size");
     var initialValue = canvasSizeEl.value;
     var canvasWidth = initialValue.split("x")[0];
     var canvasHeight = initialValue.split("x")[1];
-    console.log({ canvasWidth: canvasWidth, canvasHeight: canvasHeight });
     canvasSizeEl.addEventListener("change", function (e) {
         var _a;
         var target = e.target;
         var value = target.value;
         _a = value.split("x"), canvasWidth = _a[0], canvasHeight = _a[1];
-        console.log({ canvasWidth: canvasWidth, canvasHeight: canvasHeight });
     });
     // biome-ignore lint/style/useNumberNamespace: <explanation>
     ctx.canvas.width = (_a = parseInt(canvasWidth)) !== null && _a !== void 0 ? _a : 1000;
     // biome-ignore lint/style/useNumberNamespace: <explanation>
     ctx.canvas.height = (_b = parseInt(canvasHeight)) !== null && _b !== void 0 ? _b : 1000;
     ctx.canvas.style.width = "100%";
-    var drawBtn = document.getElementById("draw");
-    drawBtn === null || drawBtn === void 0 ? void 0 : drawBtn.addEventListener("click", function () {
-        ctx.reset();
-        onDraw(ctx);
-    });
     var addFgColorBtn = document.getElementById("btn-add-fg-color");
-    if (addFgColorBtn) {
-        addFgColorBtn.onclick = function (e) { return addFgColor(e); };
-    }
+    addFgColorBtn === null || addFgColorBtn === void 0 ? void 0 : addFgColorBtn.addEventListener("click", function (e) { return addFgColor(e); });
     var downloadBtn = document.getElementById("download-image");
-    if (downloadBtn) {
-        downloadBtn.onclick = function (e) { return downloadImage(ctx.canvas); };
-    }
+    downloadBtn === null || downloadBtn === void 0 ? void 0 : downloadBtn.addEventListener("click", function (e) { return downloadImage(ctx.canvas); });
     var rotationNumberEl = document.getElementById("rotation-number");
     var rotationRangeEl = document.getElementById("rotation-range");
     rotationNumberEl.addEventListener("input", function (e) {
@@ -88,7 +64,18 @@ window.addEventListener("DOMContentLoaded", function () {
     resetBtn.addEventListener("click", function () {
         resetSettings(ctx);
     });
+    var settingsFormEl = document.getElementById("settings-form");
+    settingsFormEl === null || settingsFormEl === void 0 ? void 0 : settingsFormEl.addEventListener("submit", function (e) {
+        e.preventDefault();
+        onSubmit(e, ctx);
+    });
 });
+var onSubmit = function (e, ctx) {
+    var target = e.target;
+    var formData = new FormData(target);
+    var settings = parseSettings(formData, ctx.canvas.width, ctx.canvas.height);
+    draw(ctx, settings);
+};
 var drawStripes = function (ctx, options) {
     for (var i = 0; i < options.cols; i++) {
         for (var j = 0; j < options.rows; j++) {
@@ -146,7 +133,6 @@ var drawRandomCircles = function (ctx, options) {
 var drawStaggeredCircles = function (ctx, options) {
     for (var r = 0; r <= options.rows; r++) {
         for (var c = 0; c <= options.cols; c++) {
-            console.log("drawing at {".concat(c, ", ").concat(r, "}"));
             ctx.beginPath();
             ctx.strokeStyle =
                 options.fgColors[Math.floor(Math.random() * options.fgColors.length)];
@@ -199,19 +185,6 @@ var drawLooseWave = function (ctx, options) {
     }
 };
 var drawBrick = function (ctx, options) {
-    // const width = options.size + options.size / 2;
-    // const height = options.size;
-    // for (let c = 0; c < options.cols; c++) {
-    // 	for (let r = 0; r < options.rows; r++) {
-    // 		ctx.strokeStyle =
-    // 			options.fgColors[Math.floor(Math.random() * options.fgColors.length)];
-    // 		if (r % 2 === 0) {
-    // 			ctx.strokeRect(c * width, r * height, width, height);
-    // 		} else {
-    // 			ctx.strokeRect(c * width - width / 2, r * height, width, height);
-    // 		}
-    // 	}
-    // }
     var r = 0;
     var c = 0;
     var width = options.size + options.size;
@@ -243,100 +216,81 @@ var drawBrick = function (ctx, options) {
         }
     }
 };
-var parseSettings = function (ctx) {
-    var bgColor = "#ffffff";
-    var fgColors = [];
-    var type = "lines";
-    var size = 20;
-    var cols = 20;
-    var rows = 20;
-    var rotation = 0;
-    var scale = 1;
-    var bgColorEl = document.getElementById("bg-color");
-    if (bgColorEl instanceof HTMLInputElement) {
-        bgColor = bgColorEl.value;
-    }
-    var fgColorEls = document.querySelectorAll("#fg-color");
-    // biome-ignore lint/complexity/noForEach: <I wand to use a forEach here, but the linter complains.>
-    fgColorEls.forEach(function (el) {
-        fgColors.push(el.value);
-    });
-    if (fgColors.length === 0) {
-        fgColors.push("#000000");
-    }
-    var typeEl = document.getElementById("type");
-    if (typeEl instanceof HTMLSelectElement) {
-        type = typeEl.value;
-    }
-    var sizeEl = document.getElementById("size");
-    if (sizeEl instanceof HTMLInputElement) {
-        size = sizeEl.valueAsNumber;
-    }
-    var rotationEl = document.getElementById("rotation-number");
-    if (rotationEl instanceof HTMLInputElement) {
-        rotation = Number(rotationEl.value);
-    }
-    var scaleEl = document.getElementById("scale-number");
-    if (scaleEl instanceof HTMLInputElement) {
-        console.log(scaleEl.value);
-        scale = scaleEl.valueAsNumber;
-    }
-    cols = Math.ceil(ctx.canvas.width / size);
-    rows = Math.ceil(ctx.canvas.height / size);
-    return { bgColor: bgColor, fgColors: fgColors, type: type, size: size, cols: cols, rows: rows, rotation: rotation, scale: scale };
+var parseSettings = function (formData, canvasWidth, canvasHeight) {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+    // biome-ignore lint/style/useNumberNamespace: <explanation>
+    var size = parseInt((_b = (_a = formData.get("size")) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : "20");
+    var options = {
+        bgColor: (_d = (_c = formData.get("bg-color")) === null || _c === void 0 ? void 0 : _c.toString()) !== null && _d !== void 0 ? _d : "#ffffff",
+        fgColors: (_e = formData.getAll("fg-color")) !== null && _e !== void 0 ? _e : ["#000000"],
+        type: (_f = formData.get("type")) !== null && _f !== void 0 ? _f : "lines",
+        size: size,
+        cols: Math.ceil(canvasWidth / size),
+        rows: Math.ceil(canvasHeight / size),
+        // biome-ignore lint/style/useNumberNamespace: <explanation>
+        rotation: parseInt((_h = (_g = formData.get("rotation")) === null || _g === void 0 ? void 0 : _g.toString()) !== null && _h !== void 0 ? _h : "0"),
+        // biome-ignore lint/style/useNumberNamespace: <explanation>
+        scale: parseFloat((_k = (_j = formData.get("scale")) === null || _j === void 0 ? void 0 : _j.toString()) !== null && _k !== void 0 ? _k : "1"),
+    };
+    return options;
 };
-var onDraw = function (ctx) {
-    var settings = parseSettings(ctx);
-    ctx.resetTransform();
-    ctx.fillStyle = settings.bgColor;
-    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    if (settings.rotation >= 1) {
-        ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2);
-        ctx.rotate((settings.rotation * Math.PI) / 180);
-        ctx.translate(-ctx.canvas.width / 2, -ctx.canvas.height / 2);
+var draw = function (ctx, options) {
+    resetCanvas(ctx);
+    var rotation = options.rotation, scale = options.scale, type = options.type;
+    var canvasWidth = ctx.canvas.width;
+    var canvasHeight = ctx.canvas.height;
+    if (rotation >= 1) {
+        ctx.translate(canvasWidth / 2, canvasHeight / 2);
+        ctx.rotate((rotation * Math.PI) / 180);
+        ctx.translate(-canvasWidth / 2, -canvasHeight / 2);
     }
-    if (settings.scale !== 0) {
-        ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2);
-        ctx.scale(settings.scale, settings.scale);
-        ctx.translate(-ctx.canvas.width / 2, -ctx.canvas.height / 2);
+    if (scale !== 0) {
+        ctx.translate(canvasWidth / 2, canvasHeight / 2);
+        ctx.scale(scale, scale);
+        ctx.translate(-canvasWidth / 2, -canvasHeight / 2);
     }
-    switch (settings.type) {
+    switch (type) {
         case "stripes": {
-            drawStripes(ctx, settings);
+            drawStripes(ctx, options);
             break;
         }
         case "random_lines": {
-            drawRandomLines(ctx, settings);
+            drawRandomLines(ctx, options);
             break;
         }
         case "random_squares": {
-            drawSquares(ctx, settings);
+            drawSquares(ctx, options);
             break;
         }
         case "random_circles": {
-            drawRandomCircles(ctx, settings);
+            drawRandomCircles(ctx, options);
             break;
         }
         case "staggered_circles": {
-            drawStaggeredCircles(ctx, settings);
+            drawStaggeredCircles(ctx, options);
             break;
         }
         case "compact_wave": {
-            drawCompactWave(ctx, settings);
+            drawCompactWave(ctx, options);
             break;
         }
         case "loose_wave": {
-            drawLooseWave(ctx, settings);
+            drawLooseWave(ctx, options);
             break;
         }
         case "brick": {
-            drawBrick(ctx, settings);
+            drawBrick(ctx, options);
             break;
         }
         default: {
             throw new Error("Unknown type");
         }
     }
+};
+var resetCanvas = function (ctx) {
+    ctx.reset();
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 };
 var downloadImage = function (canvas) {
     var img = canvas.toDataURL("image/png");
@@ -363,6 +317,7 @@ var addFgColor = function (e) {
     var removeBtnEl = document.createElement("button");
     removeBtnEl.id = "btn-remove-fg-color";
     removeBtnEl.textContent = "Remove color";
+    removeBtnEl.type = "button";
     removeBtnEl.onclick = function (e) { return removeFgColor(e); };
     parentEl.appendChild(removeBtnEl);
     if (settingsPanelEl) {
