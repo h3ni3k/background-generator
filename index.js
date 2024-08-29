@@ -17,16 +17,21 @@ window.addEventListener("DOMContentLoaded", function () {
     var initialValue = canvasSizeEl.value;
     var canvasWidth = initialValue.split("x")[0];
     var canvasHeight = initialValue.split("x")[1];
-    canvasSizeEl.addEventListener("change", function (e) {
-        var _a;
-        var target = e.target;
-        var value = target.value;
-        _a = value.split("x"), canvasWidth = _a[0], canvasHeight = _a[1];
-    });
     // biome-ignore lint/style/useNumberNamespace: <explanation>
     ctx.canvas.width = (_a = parseInt(canvasWidth)) !== null && _a !== void 0 ? _a : 1000;
     // biome-ignore lint/style/useNumberNamespace: <explanation>
     ctx.canvas.height = (_b = parseInt(canvasHeight)) !== null && _b !== void 0 ? _b : 1000;
+    canvasSizeEl.addEventListener("change", function (e) {
+        var _a;
+        var _b, _c;
+        var target = e.target;
+        var value = target.value;
+        _a = value.split("x"), canvasWidth = _a[0], canvasHeight = _a[1];
+        // biome-ignore lint/style/useNumberNamespace: <explanation>
+        ctx.canvas.width = (_b = parseInt(canvasWidth)) !== null && _b !== void 0 ? _b : 1000;
+        // biome-ignore lint/style/useNumberNamespace: <explanation>
+        ctx.canvas.height = (_c = parseInt(canvasHeight)) !== null && _c !== void 0 ? _c : 1000;
+    });
     ctx.canvas.style.width = "100%";
     var addFgColorBtn = document.getElementById("btn-add-fg-color");
     addFgColorBtn === null || addFgColorBtn === void 0 ? void 0 : addFgColorBtn.addEventListener("click", function (e) { return addFgColor(e); });
@@ -295,6 +300,7 @@ var resetCanvas = function (ctx) {
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 };
 var downloadImage = function (canvas) {
+    console.log(canvas);
     var img = canvas.toDataURL("image/png");
     var dlink = document.createElement("a");
     dlink.download = "image.png";
@@ -310,6 +316,7 @@ var addFgColor = function (e) {
     var settingsPanelEl = (_a = target.parentElement) === null || _a === void 0 ? void 0 : _a.parentElement;
     var parentEl = document.createElement("div");
     parentEl.id = "new-fg-color";
+    parentEl.classList.add("fg-color-container");
     var inputEl = document.createElement("input");
     inputEl.type = "color";
     inputEl.name = "fg-color";

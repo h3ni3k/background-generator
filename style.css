@@ -1,12 +1,13 @@
 * {
   box-sizing: border-box;
+  font-family: sans-serif;
 }
 
 html, body {
   margin: 0;
   padding: 0;
   height: 100vh;
-  background: #344152;
+  background: #455974;
 }
 
 #canvas {
@@ -22,7 +23,6 @@ html, body {
   padding: 1rem;
 }
 
-
 .canvas-panel {
   height: 100%;
   width: 80%;
@@ -31,15 +31,88 @@ html, body {
 .settings-panel {
   display: flex;
   flex-direction: column;
+  background: #4f6a8f;
+  width: 20%;
 }
 
 .setting-panel-element {
   padding: 0.5rem;
-  background: cornflowerblue;
   display: flex;
   flex-direction: column;
+  color: #efefef;
 }
 
-.setting-panel-element:not(:last-child){
-  margin-bottom: 0.5rem;
+.setting-panel-element:not(:last-child) {
+  border-bottom: #202a36 solid 1px;
+}
+
+.fg-color-container-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+}
+
+.fg-color-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.fg-color-container:not(:last-child){
+  margin-bottom: 0.25rem;
+}
+
+.setting-panel-element label {
+  font-size: large;
+  margin-bottom: 0.25rem;
+}
+
+.setting-panel-element input[type="number"] {
+  width: 100%;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 4px;
+  background: #455974;
+  color: whitesmoke;
+}
+
+.setting-panel-element input[type="color"] {
+  width: 50%;
+  border: none;
+  border-radius: 4px;
+  background: #455974;
+  color: whitesmoke;
+  margin-right: 0.5rem;
+}
+
+.setting-panel-element input[type="range"] {
+  width: 100%;
+  appearance: none;
+  background: #455974;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 0;
+  margin: 0.5rem 0 0 0;
+}
+
+
+.setting-panel-element select {
+  width: 100%;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 4px;
+  background: #455974;
+  color: whitesmoke;
+}
+
+.setting-panel-element button {
+  background: #455974;
+  padding: 0.25rem 0.5rem;
+  border: none;
+  color: whitesmoke;
+  text-decoration: none;
+  cursor: pointer;
 }
